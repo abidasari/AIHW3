@@ -156,6 +156,8 @@ void printTerm(term t)
 	cout << "]";
 }
 
+
+
 void printMap(unordered_map<string,string> m)
 {
 	for (auto& x: m)
@@ -197,7 +199,7 @@ void printKB(list<sentence> kb)
 // list<string> bc_or(list<sentence> kb, term query, unordered_map<string,string> theta);
 // list<string> bc_and(list<sentence> kb, list<term> queries, unordered_map<string,string> theta);
 // list<string> bc_ask(list<sentence> kb, term query);
-// list<sentence> fetch_rules(list<sentence> kb, term query);
+list<sentence> fetch_rules(list<sentence> kb, term query);
 unordered_map<string,string> unify(list<string> args, list<string> q_args, unordered_map<string,string> theta);
 unordered_map<string,string> unify_var(list<string> args, list<string> q_args, unordered_map<string,string> theta);
 term subst(unordered_map<string,string> theta, term t);
@@ -306,11 +308,28 @@ unordered_map<string,string> unify(list<string> args, list<string> q_args, unord
 	}
 
 }
-// list<sentence> fetch_rules(list<sentence> kb, term query)
-// { 
 
-// }
 
+list<sentence> fetch_rules(list<sentence> kb, term query)
+{
+	list<sentence>::iterator it;
+	list<sentence> res;
+	for(it=kb.begin();it!=kb.end();++it)
+	{
+		string name = query.name;
+		if(it->consequent.name != name)
+			continue;
+		cout << "name matches!\n";
+		term t = it->consequent;
+		if(t.args.size() != query.args.size())
+			continue;
+		cout << "signatrue matches!!\n";
+		if(t.type != query.type)
+			continue;
+		res.push_back(*it);
+	}
+	return res;
+}
 // list<string> bc_or(list<sentence> kb, term query, unordered_map<string,string> theta)
 // {
 // 	// cout << "bc_or ( " << pTerm(query) << ", " << theta << " )\n";
@@ -437,10 +456,12 @@ int main()
 	cout << "\n";
 	for (auto& x: output)
 	    cout << x.first << ": " << x.second << std::endl;
-	term y("~A(Jon)");
+	term y("D(ping,pong)");
 	cout << "Calling subst: --------\n";
 	printTerm(subst(three, y));
 	cout << endl;
+	cout << "calling fetch sent:\n";
+	printKB(fetch_rules(KB,y));
 	list<term>::iterator it2;
 	// for(it2 = Q.begin(); it2!=Q.end(); it2++)
 	// {
