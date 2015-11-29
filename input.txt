@@ -1,12 +1,12 @@
 1
-IsMultiTalented(Aggarwal)
+IsMultiTalented(John)
 10
 PlaysGuitar(Aggarwal,Electric)
-LikesSinging(x) => Sings(Aggarwal)
-KnowsEverything(x) => IsMultiTalented(Aggarwal)
-PlaysGuitar(x,Acoustic) ^ Sings(x) ^ Studies(x,USC) => IsMultiTalented(Aggarwal)
+LikesSinging(x) => Sings(x)
+KnowsEverything(x) => IsMultiTalented(x)
+PlaysGuitar(x,Acoustic) ^ Sings(x) ^ Studies(x,USC) => IsMultiTalented(x)
 LikesSinging(John)
-PlaysGuitar(Aggarwal,Acoustic)
+PlaysGuitar(John,Acoustic)
 Cleared(x,GRE) ^ Admitted(x,USC) => Studies(x,USC)
 Applied(x,USC) => Admitted(x,USC)
 Applied(John,USC)

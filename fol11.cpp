@@ -1,3 +1,4 @@
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #include <iostream>
 #include <list>
 #include <string>
@@ -225,9 +226,9 @@ void printKB(list<sentence> kb)
 
 //Prints end
 
-unordered_map<string,string> bc_or(list<sentence> kb, term query, unordered_map<string,string> theta);
-unordered_map<string,string> bc_and(list<sentence> kb, list<term> queries, unordered_map<string,string> theta);
-unordered_map<string,string> bc_ask(list<sentence> kb, term query);
+list< unordered_map<string,string> > bc_or(list<sentence> kb, term query, unordered_map<string,string> theta);
+list< unordered_map<string,string> > bc_and(list<sentence> kb, list<term> queries, unordered_map<string,string> theta);
+list< unordered_map<string,string> > bc_ask(list<sentence> kb, term query);
 list<sentence> fetch_rules(list<sentence> kb, term query);
 unordered_map<string,string> unify(list<string> args, list<string> q_args, unordered_map<string,string> theta);
 unordered_map<string,string> unify_var(list<string> args, list<string> q_args, unordered_map<string,string> theta);
@@ -382,6 +383,7 @@ list<sentence> fetch_rules(list<sentence> kb, term query)
 	for(it=kb.begin();it!=kb.end();++it)
 	{
 		string name = query.name;
+
 		if(it->consequent.name != name)
 			continue;
 		// cout << "name matches!\n";
@@ -391,15 +393,28 @@ list<sentence> fetch_rules(list<sentence> kb, term query)
 		// cout << "signatrue matches!!\n";
 		if(t.type != query.type)
 			continue;
+		// cout << "Type matches!\n"; 
 		res.push_back(*it);
 	}
 	return res;
 }
 
-
-unordered_map<string,string> bc_or(list<sentence> kb, term query, unordered_map<string,string> theta)
+list<unordered_map<string,string> > mergeLists(list<unordered_map<string,string> > first, list<unordered_map<string,string> > second)
 {
-		getchar();
+	list<unordered_map<string,string> >::iterator it;
+	unordered_map<string,string> temp;
+	for(it=second.begin();it!=second.end();++it)
+	{
+		temp = *it;
+		first.push_back(temp);
+	}
+	return first;
+}
+
+list< unordered_map<string,string> > bc_or(list<sentence> kb, term query, unordered_map<string,string> theta)
+{
+	getchar();
+	
 
 	string qlist = pTerm(query);
 	string thetal = printMapInline(theta);
@@ -407,7 +422,7 @@ unordered_map<string,string> bc_or(list<sentence> kb, term query, unordered_map<
 	list<sentence> sub_kb = fetch_rules(kb, query);
 	printKB(sub_kb);
 	list<sentence>::iterator it;
-	unordered_map<string,string> res;
+	list< unordered_map<string,string> > res;
 	// unordered_map<string,string> result;
 	for(it = sub_kb.begin(); it != sub_kb.end(); ++it)
 	{
@@ -417,43 +432,34 @@ unordered_map<string,string> bc_or(list<sentence> kb, term query, unordered_map<
 		list<string> query_args = query.args;
 		if(rhs.name != query.name)
 			continue;
-		unordered_map<string,string> and_res = bc_and(kb, lhs, unify(rhs_args, query_args, theta));
-		
-		for (auto& x: and_res)
-		    cout << x.first << ": " << x.second << std::endl;
-		// getchar();
-		cout << "---------------------$----------------------\n";
-		// int inp;
-		// cin >> inp;
-
-
-		res.insert(and_res.begin(), and_res.end()); // maybe it should be the other way around
-		// result.merge(and_res); // dunno what to do exactly here.
+		list< unordered_map<string,string> > and_res = bc_and(kb, lhs, unify(rhs_args, query_args, theta));
+		res = mergeLists(res,and_res); // merged and placed in res
 	}
+
 	return res;
 }
 
 
-
-unordered_map<string,string> bc_and(list<sentence> kb, list<term> predcs, unordered_map<string,string> theta)
+list<unordered_map<string,string> > bc_and(list<sentence> kb, list<term> predcs, unordered_map<string,string> theta)
 {
 	// string qlist = pTerm(query);
 	string thetal = printMapInline(theta);
 	cout << "bc_and ( KB , " << printListTerms(predcs) << " , "<< thetal << " )\n";
 
-	unordered_map<string,string> result;
+	list<unordered_map<string,string> > result;
 	unordered_map<string,string>::const_iterator got = theta.find ("failure");
 	if( got != theta.end()) // failure found in the map!!
 	{
-		unordered_map<string,string> res = { { "failure" , "failure" } };
-		// res.push_back("failure");
+		list< unordered_map<string,string> > res;
+		unordered_map<string,string> pop = { { "failure" , "failure" } };
+		res.push_back(pop);
 		return res;
 	}
 	else if (predcs.empty())
 	{
-		// list<string> res;
-		// res.push_back(theta);
-		return theta;
+		list< unordered_map<string,string> > res;
+		res.push_back(theta);
+		return res;
 	}
 	else
 	{
@@ -461,28 +467,32 @@ unordered_map<string,string> bc_and(list<sentence> kb, list<term> predcs, unorde
 		predcs.pop_front();
 		list<term> rest = predcs;
 
-		unordered_map<string,string> or_result = bc_or(kb, subst(theta, first), theta);
+		list< unordered_map<string,string> > or_result = bc_or(kb, subst(theta, first), theta);
 
-		// unordered_map<string,string>::iterator it;
-		// for(it = or_result.begin(); it!=or_result.end(); ++it)
-		// {
-		// 	unordered_map<string,string> _theta;
-		// 	_theta.insert(*it);
-		// 	unordered_map<string,string>and_res = bc_and(kb, rest, _theta);
-		// 	// result.merge(andresult);
-		// 	result.insert(and_res.begin(), and_res.end());
-		// }
-		unordered_map<string,string>and_res = bc_and(kb, rest, or_result);
+		list< unordered_map<string,string> >::iterator it;
+		for(it = or_result.begin(); it!=or_result.end(); ++it)
+		{
+
+			unordered_map<string,string> _theta = *it;
+			// _theta.insert(*it);
+			list< unordered_map<string,string> >and_res = bc_and(kb, rest, _theta);
+			// result.merge(andresult);
+			// result.merge(and_res);
+			result = mergeLists(result,and_res);
+		}
+		// unordered_map<string,string>and_res = bc_and(kb, rest, or_result);
 		// result.merge(andresult);
-		result.insert(and_res.begin(), and_res.end());
+		// result.insert(and_res.begin(), and_res.end());
 	}
 	return result;
 }
 
-unordered_map<string,string> bc_ask(list<sentence> kb, term query) // not yet sure what it should return
+list< unordered_map<string,string> > bc_ask(list<sentence> kb, term query) // not yet sure what it should return
 {
 	unordered_map<string, string> theta;
-	return bc_or(kb, query, theta);
+	list<unordered_map<string,string> > out = bc_or(kb, query, theta);
+	
+	return out;
 }
 
 
@@ -497,7 +507,7 @@ int main()
 	// main_rhs = query;// for something
 	int kb_size, q_size; // kb_size stores the KB size and q_size stores the numeber of queries
 
-	f.open("input.txt", ios::in); //open the file
+	f.open("input_3.txt", ios::in); //open the file
 	// f >> temp_str;
 	getline(f, temp_str);
 	q_size = stoi(temp_str);
@@ -548,29 +558,65 @@ int main()
 
 
 	// unordered_map<string,string> bindings = { {"x12","Bob"} };
-	// list<string> a = {{"x1"}};
-	// list<string> b = {{"Bob"}};
+	// list<string> a = {{"Phd"},{"y1"}};
+	// list<string> b = {{"x2"},{"y2"}};
 	// printMap(unify(a,b,bindings));
 
+// getchar();
+	// list<sentence> sub_kb = fetch_rules(KB, Q.front());
+	// printKB(sub_kb);
 
-
-
+// getchar();
 	list<term>::iterator it2;
 	list<string> ans;
 	getchar();
 	for(it2 = Q.begin(); it2!=Q.end(); it2++)
 	{
 		string output = "true"; 
-		unordered_map<string,string> res =  bc_ask(KB, *it2);
-		if (res.empty())
-			output = "false";
+		list<unordered_map<string,string> > res =  bc_ask(KB, *it2);
 
-		unordered_map<string,string>::iterator got = res.find("failure");
-		if ( got != res.end() && !res.empty() && res.size()==1)
-		    output = "false";
-	    
-		// cout << "Final result: " << output << endl;
-		ans.push_back(output);
+		// list< unordered_map<string,string> >:: iterator it2;
+		// for(it2=res.begin(); it2!=res.end(); ++it2)
+		// {
+		// 	cout << "-----------------------\n";
+		// 	for(auto& x: *it2)
+		// 	{
+		// 		cout << x.first << ": " << x.second << endl;
+		// 	}
+		// }
+
+		if (res.empty())
+		{
+			output = "false";
+			ans.push_back(output);
+			continue;
+		}
+		unordered_map<string,string> element = res.front();
+		unordered_map<string,string>::iterator got = element.find("failure");
+		if(res.size() == 1 && got!=element.end() && !res.empty())
+		{
+			output = "false";
+			ans.push_back(output);
+			continue;
+		}
+
+		if(res.size() != 1)
+		{
+			list< unordered_map<string,string> >::iterator i;
+			int count = 0;
+			for(i=res.begin(); i!=res.end(); ++i)
+			{
+				unordered_map<string,string>::iterator got = i->find("failure");
+				if(got!=i->end())
+					count++;
+			}
+			if(count == res.size())
+			{
+				output = "false";
+				ans.push_back(output);
+				continue;
+			}
+		}
 	}
 	cout << endl;
 	printList(ans);

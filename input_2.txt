@@ -1,5 +1,5 @@
 1
-F(Bob)
+~H(John)
 14
 A(x) => H(x)
 D(x,y) => ~H(y)
