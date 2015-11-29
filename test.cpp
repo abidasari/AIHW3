@@ -3,6 +3,8 @@
 #include <list>
 #include <string>
 #include <unordered_map>
+#include <vector>
+
 using namespace std;
 string trim(string s)
 {
@@ -20,6 +22,22 @@ bool firstUpper(string& word)
 
 int main()
 {
+	list< unordered_map<string,string> > res;
+	unordered_map<string,string> un_map1 = { { "one" , "1" } , { "two" , "2" } , { "three" , "3" } };
+	unordered_map<string,string> un_map2 = { { "four" , "4" } , { "five" , "5" } , { "six" , "6" } };
+
+	unordered_map<string,string> un_map3 = { { "seven" , "7" } , { "eight" , "8" } , { "nine" , "9" } };
+
+	res.push_back(un_map1);
+	res.push_back(un_map2);
+	res.push_back(un_map3);
+	string temp2, temp1;
+
+
+
+
+
+
 	std::string input = "a => ~ghi(g,x,y)";
 	size_t delim = input.find('=');
 
@@ -73,12 +91,17 @@ mapr.insert({tes,y});
 	for (auto& x: mapr)
 	    cout << x.first << ": " << x.second << std::endl;
 
-	// cout << mapr.at("tommy") << endl;
+	cout <<"fadsf"<< mapr.at("tommy") << endl;
 
 	while(std::getline(ss, token, '^'))
 	{
 	    std::cout <<"m" <<token << " "<< trim(token) << '\n';
 	}
+
+	cout << "############################################\n";
+	unordered_map<string,string> test;
+		for (auto& x: test)
+	    cout << "->>>>>>>" << x.first << ": " << x.second << std::endl; 
 	
 	return 0;
 }
