@@ -1,5 +1,5 @@
 1
-IsMultiTalented(John)
+IsMultiTalented(Aggarwal)
 10
 PlaysGuitar(Aggarwal,Electric)
 LikesSinging(x) => Sings(x)

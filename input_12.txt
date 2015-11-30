@@ -1,0 +1,7 @@
+1
+Smart(Sanmukh)
+4
+Love(Jaqueline,Vishal)
+Love(Salman,Jaqueline)
+Love(Salman,x) ^ Love(x,Vishal) => Beautiful(x)
+Beautiful(Jaqueline) => Smart(Sanmukh)

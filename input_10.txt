@@ -1,0 +1,7 @@
+1
+Sneeze(Lise)
+4
+Allergies(x) => Sneeze(x)
+Cat(Felix) ^ Allergic-to-cats(x) => Allergies(x)
+Cat(Felix)
+Allergic-to-cats(Lise)

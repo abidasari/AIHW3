@@ -1,0 +1,11 @@
+1
+Better_q(A,B)
+8
+Better(A,x) ^ Better(x,S) => Better_q(A,B)
+Better(A,x) ^ Better(x,B) => Better_q(A,B)
+Great(A,x) ^ Better(D,B) ^ Great(x,Z) => Better(A,x)
+Great(A,x) ^ Better(D,B) ^ Great(x,Q) => Better(A,x)
+Great(A,C)
+Better(D,B)
+Great(A,D)
+Great(D,Q)

@@ -1,0 +1,5 @@
+1
+A(J,Sanmukh)
+2
+B(x,J) => A(J,Sanmukh)
+B(Sanmukh,J)

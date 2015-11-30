@@ -1,0 +1,7 @@
+1
+A(Bob)
+4
+B(x) ^ C(x,Tom) => A(y)
+B(Bob)
+D(x) => C(x,Tom)
+C(x,Tom) => D(x)

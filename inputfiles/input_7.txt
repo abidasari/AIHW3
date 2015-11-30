@@ -1,0 +1,6 @@
+1
+C(John, Bob)
+3
+A(x,y) ^ B(y,z) => C(x,z)
+B(Tom,Bob) ^ E(Bob, Dan) => F(Tom, Dan)
+A(John,Bob)

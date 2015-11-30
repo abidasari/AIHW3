@@ -1,0 +1,7 @@
+1
+F(Bob)
+4
+A(x,y) ^ B(x,y) => F(x)
+A(Bob,John)
+A(Bob,Dylan)
+B(Bob,Dylan)

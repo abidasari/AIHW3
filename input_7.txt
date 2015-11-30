@@ -1,0 +1,10 @@
+1
+Criminal(RealityMan)
+7
+Programmer(x) ^ Emulator(U64) ^ People(friends) => Criminal(x)
+Software(x) ^ Runs(x,N64games) => Emulator(x)
+Programmer(RealityMan)
+People(friends)
+Software(U64)
+Use(friends,U64)
+Runs(U64,N64games)

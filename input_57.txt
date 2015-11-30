@@ -1,0 +1,6 @@
+1
+Happy(Me)
+3
+Rich(x) => Happy(x)
+Happy(Boss) => Rich(Me)
+Rich(Boss)

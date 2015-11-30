@@ -1,0 +1,10 @@
+1
+Better_q(A,B)
+7
+Better(A,x) ^ Better(x,B) => Better_q(A,B)
+Great(A,x) => Better(A,x)
+Great(A,C)
+Better(A,C)
+Better(M,B)
+Better(N,B)
+Great(A,C) => Better(C,B)

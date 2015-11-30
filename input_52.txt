@@ -1,0 +1,7 @@
+1
+A(A,B)
+4
+B(x,ABC) ^ C(x,CDE) => A(A,B)
+D(x,ABC) => B(DEF,ABC)
+D(DE,ABC)
+C(DEF,CDE)

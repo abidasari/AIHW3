@@ -1,0 +1,11 @@
+1
+Fly(Ram)
+8
+Fly(x) ^ Friend(x,y) => Fly(y)
+Parent(x,y) ^ Hero(y) => Fly(x)
+Parent(Dr,Doom)
+Hero(Doom)
+Friend(Dr,Pilot)
+Friend(Pilot,Tom)
+Friend(Tom,Cruise)
+Friend(Cruise,Ram)

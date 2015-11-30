@@ -1,10 +1,11 @@
 1
 Better_q(A,B)
-7
+8
 Better(A,x) ^ Better(x,B) ^ Worse(x) => Better_q(A,B)
 Great(A,x) => Better(A,x)
 Great(A,C)
 Great(A,C) ^ Better(x,B) ^ Average(Someone) => Worse(C)
 Average(He) => Average(Someone)
-Average(He)
+Better(D,B)
 Better(C,B)
+Average(He)

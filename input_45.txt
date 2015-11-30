@@ -1,0 +1,9 @@
+1
+Diagnosis(John,Uninfected)
+6
+LostWeight(x) ^ HasSymptom(x,Cough) => Diagnosis(John,Uninfected)
+ABC(x) ^ DEF(x,Cough) => LostWeight(x)
+HasSymptom(Alex,Cough)
+ABC(John)
+DEF(Alex,Cough)
+ABC(Alex)

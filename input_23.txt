@@ -1,0 +1,10 @@
+1
+Diagnosis(John,Infected)
+7
+HasSymptom(x,Diarrhea) => LostWeight(x)
+LostWeight(x) ^ Diagnosis(x,LikelyInfected) => Diagnosis(x,Infected)
+HasTraveled(x,Tiberia) ^ HasFever(x) ^ HasCold(x) => Diagnosis(x,LikelyInfected)
+HasTraveled(John,Tiberia)
+Sleeping(John) => HasFever(John)
+HasSymptom(John,Diarrhea)
+HasCold(John)

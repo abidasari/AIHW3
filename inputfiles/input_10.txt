@@ -1,0 +1,10 @@
+1
+C(John,Suresh)
+7
+A(x,y) ^ B(y,z) => C(x,z)
+E(x,y) ^ D(y,z) ^ F(y,Kumar)=> B(x,z)
+Knows(x,y) => F(x,y)
+A(John,Ramesh)
+E(Ramesh,Kumar)
+D(Kumar,Suresh)
+Knows(Kumar,Kumar)

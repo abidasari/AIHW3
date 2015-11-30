@@ -1,0 +1,9 @@
+1
+Color(Fritz,Green)
+6
+Croaks(x) ^ Eats(x,Flies) => Frog(x)
+Chirps(x) ^ Sings(x) => Canary(x)
+Frog(x) => Color(x,Green)
+Canary(x) => Color(x,Yellow)
+Croaks(Fritz)
+Eats(Fritz,Flies)

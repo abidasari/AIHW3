@@ -1,0 +1,6 @@
+1
+A(J,Sanmukh)
+3
+B(x,J) => A(J,Sanmukh)
+C(x) => B(Sanmukh,J)
+C(Sunny)

@@ -1,0 +1,8 @@
+1
+A(Bob)
+5
+B(x) ^ C(x) => A(x)
+B(x) ^ D(x) => A(x)
+B(Bob)
+C(Bob)
+D(Bobb)

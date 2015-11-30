@@ -1,0 +1,8 @@
+1
+One_q(A)
+5
+One(x) ^ Fourth(x) => One_q(x)
+Two(x) => One(A)
+Two(C)
+Fourth(B)
+Fourth(A)

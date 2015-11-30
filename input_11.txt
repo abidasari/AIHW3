@@ -1,0 +1,6 @@
+1
+Love(Jacqueline,Sanmukh)
+3
+Love(Salman,x)
+Love(Salman,Jacqueline) => Love(Jacqueline,Sunny)
+Love(Jacqueline,Sunny) => Love(Jacqueline,Sanmukh)
