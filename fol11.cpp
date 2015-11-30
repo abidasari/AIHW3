@@ -10,6 +10,7 @@
 #include <sys/types.h>
 
 using namespace std;
+int joke = 0;
 
 string trim(string s)//trims leading and trailing spaces
 {
@@ -226,9 +227,9 @@ void printKB(list<sentence> kb)
 
 //Prints end
 
-list< unordered_map<string,string> > bc_or(list<sentence> kb, term query, unordered_map<string,string> theta);
-list< unordered_map<string,string> > bc_and(list<sentence> kb, list<term> queries, unordered_map<string,string> theta);
-list< unordered_map<string,string> > bc_ask(list<sentence> kb, term query);
+list< unordered_map<string,string> > bc_or(list<sentence> kb, term query, unordered_map<string,string> theta, list<term> done);
+list< unordered_map<string,string> > bc_and(list<sentence> kb, list<term> queries, unordered_map<string,string> theta, list<term> done);
+list< unordered_map<string,string> > bc_ask(list<sentence> kb, term query, list<term> done);
 list<sentence> fetch_rules(list<sentence> kb, term query);
 unordered_map<string,string> unify(list<string> args, list<string> q_args, unordered_map<string,string> theta);
 unordered_map<string,string> unify_var(list<string> args, list<string> q_args, unordered_map<string,string> theta);
@@ -411,19 +412,74 @@ list<unordered_map<string,string> > mergeLists(list<unordered_map<string,string>
 	return first;
 }
 
-list< unordered_map<string,string> > bc_or(list<sentence> kb, term query, unordered_map<string,string> theta)
+bool allConst(term q);
+bool isDone(list<term> done, term q);
+
+bool allConst(term q)
+{
+	bool res = true;
+	list<string>::iterator it;
+	for(it = q.args.begin(); it!=q.args.end();++it )
+	{
+		if(!firstUpper(*it))
+			res = false;
+	}
+	return res;
+}
+bool isDone(list<term> done, term query)
+{
+	bool res = false;
+	list<term>::iterator it;
+	for (it = done.begin(); it!=done.end();++it)
+	{
+		if(it->name != query.name)
+			continue;
+		if(it->type != query.type)
+			continue;
+		if(it->args.size() != query.args.size())
+			continue;
+
+		list<string>::iterator itr, itr1;
+		int count = 0;
+		for(itr=it->args.begin(), itr1=query.args.begin();itr1!=query.args.end(); ++itr, ++itr1)
+		{
+			if(*itr == *itr1)
+				count++;
+		}
+		if(count == it->args.size())
+			res = true;
+	}
+	return res;
+}
+list< unordered_map<string,string> > bc_or(list<sentence> kb, term query, unordered_map<string,string> theta, list<term> done)
 {
 	getchar();
-	
 
 	string qlist = pTerm(query);
 	string thetal = printMapInline(theta);
-	cout << "bc_or ( KB , " << qlist << " , " << thetal << " )\n";
-	list<sentence> sub_kb = fetch_rules(kb, query);
-	printKB(sub_kb);
+	string donelist = printListTerms(done);
+	cout << "bc_or ( KB , " << qlist << " , " << thetal <<  " , " << donelist << " )\n";
 	list<sentence>::iterator it;
 	list< unordered_map<string,string> > res;
+	if(allConst(query))
+	{
+		if (isDone(done, query))
+		{
+			unordered_map<string,string> pop = { { "failure" , "failure" } };
+			res.push_back(pop);
+			return res;
+		}
+		else
+		{
+			done.push_back(query);
+		}
+	}
+	list<sentence> sub_kb = fetch_rules(kb, query);
+	printKB(sub_kb);
+	
 	// unordered_map<string,string> result;
+
+
 	for(it = sub_kb.begin(); it != sub_kb.end(); ++it)
 	{
 		list<term> lhs = it->predicates;
@@ -432,19 +488,23 @@ list< unordered_map<string,string> > bc_or(list<sentence> kb, term query, unorde
 		list<string> query_args = query.args;
 		if(rhs.name != query.name)
 			continue;
-		list< unordered_map<string,string> > and_res = bc_and(kb, lhs, unify(rhs_args, query_args, theta));
+		list< unordered_map<string,string> > and_res = bc_and(kb, lhs, unify(rhs_args, query_args, theta), done);
 		res = mergeLists(res,and_res); // merged and placed in res
+		//purge the done list
+		// list<term> newdone;
+		// done = newdone;
 	}
 
 	return res;
 }
 
 
-list<unordered_map<string,string> > bc_and(list<sentence> kb, list<term> predcs, unordered_map<string,string> theta)
+list<unordered_map<string,string> > bc_and(list<sentence> kb, list<term> predcs, unordered_map<string,string> theta, list<term> done)
 {
 	// string qlist = pTerm(query);
 	string thetal = printMapInline(theta);
-	cout << "bc_and ( KB , " << printListTerms(predcs) << " , "<< thetal << " )\n";
+	string donelist = printListTerms(done);
+	cout << "bc_and ( KB , " << printListTerms(predcs) << " , "<< thetal << " , " << donelist <<" )\n";
 
 	list<unordered_map<string,string> > result;
 	unordered_map<string,string>::const_iterator got = theta.find ("failure");
@@ -467,7 +527,7 @@ list<unordered_map<string,string> > bc_and(list<sentence> kb, list<term> predcs,
 		predcs.pop_front();
 		list<term> rest = predcs;
 
-		list< unordered_map<string,string> > or_result = bc_or(kb, subst(theta, first), theta);
+		list< unordered_map<string,string> > or_result = bc_or(kb, subst(theta, first), theta, done);
 
 		list< unordered_map<string,string> >::iterator it;
 		for(it = or_result.begin(); it!=or_result.end(); ++it)
@@ -475,7 +535,7 @@ list<unordered_map<string,string> > bc_and(list<sentence> kb, list<term> predcs,
 
 			unordered_map<string,string> _theta = *it;
 			// _theta.insert(*it);
-			list< unordered_map<string,string> >and_res = bc_and(kb, rest, _theta);
+			list< unordered_map<string,string> >and_res = bc_and(kb, rest, _theta, done);
 			// result.merge(andresult);
 			// result.merge(and_res);
 			result = mergeLists(result,and_res);
@@ -490,13 +550,14 @@ list<unordered_map<string,string> > bc_and(list<sentence> kb, list<term> predcs,
 list< unordered_map<string,string> > bc_ask(list<sentence> kb, term query) // not yet sure what it should return
 {
 	unordered_map<string, string> theta;
-	list<unordered_map<string,string> > out = bc_or(kb, query, theta);
+	list<term> done;
+	list<unordered_map<string,string> > out = bc_or(kb, query, theta, done);
 	
 	return out;
 }
 
 
-int main()
+int main(int argc, char *argv[])
 {
 	fstream f; // for file stream
 	string temp_str; // to store the temp strings 
@@ -506,8 +567,9 @@ int main()
 	list<term> Q; // the parsed KB.
 	// main_rhs = query;// for something
 	int kb_size, q_size; // kb_size stores the KB size and q_size stores the numeber of queries
+	string inputfile = argv[1]; 
 
-	f.open("input_3.txt", ios::in); //open the file
+	f.open(inputfile, ios::in); //open the file
 	// f >> temp_str;
 	getline(f, temp_str);
 	q_size = stoi(temp_str);
@@ -569,25 +631,26 @@ int main()
 // getchar();
 	list<term>::iterator it2;
 	list<string> ans;
-	getchar();
+	// getchar();
 	for(it2 = Q.begin(); it2!=Q.end(); it2++)
 	{
-		string output = "true"; 
+		string output = "TRUE"; 
 		list<unordered_map<string,string> > res =  bc_ask(KB, *it2);
 
-		// list< unordered_map<string,string> >:: iterator it2;
-		// for(it2=res.begin(); it2!=res.end(); ++it2)
-		// {
-		// 	cout << "-----------------------\n";
-		// 	for(auto& x: *it2)
-		// 	{
-		// 		cout << x.first << ": " << x.second << endl;
-		// 	}
-		// }
+		list< unordered_map<string,string> >:: iterator it2;
+		for(it2=res.begin(); it2!=res.end(); ++it2)
+		{
+			cout << "-----------------------\n";
+			for(auto& x: *it2)
+			{
+				cout << x.first << ": " << x.second << endl;
+			}
+		}
+		cout << "-----------------------\n";
 
 		if (res.empty())
 		{
-			output = "false";
+			output = "FALSE";
 			ans.push_back(output);
 			continue;
 		}
@@ -595,7 +658,7 @@ int main()
 		unordered_map<string,string>::iterator got = element.find("failure");
 		if(res.size() == 1 && got!=element.end() && !res.empty())
 		{
-			output = "false";
+			output = "FALSE";
 			ans.push_back(output);
 			continue;
 		}
@@ -612,13 +675,20 @@ int main()
 			}
 			if(count == res.size())
 			{
-				output = "false";
+				output = "FALSE";
 				ans.push_back(output);
 				continue;
 			}
 		}
+		ans.push_back(output);
 	}
 	cout << endl;
+	ofstream o_file;
+	o_file.open("output.txt");
+	list<string>::iterator itr;
+	for(itr=ans.begin();itr!=ans.end();++itr)
+		o_file << *itr << endl;
+	o_file.close();
 	printList(ans);
 	cout << endl;
 
