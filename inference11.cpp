@@ -278,7 +278,7 @@ term subst(unordered_map<string,string> theta, term t)
 {
 	string thetaout = printMapInline(theta);
 	string termin = pTerm(t);
-	cout << "subst( " << thetaout << " , " << termin << " )" << endl;
+	// cout << "subst( " << thetaout << " , " << termin << " )" << endl;
 	term res("NULL");
 	res.type = t.type;
 	res.name = t.name;
@@ -307,7 +307,7 @@ unordered_map<string,string> unify_var(list<string> args, list<string> q_args, u
 	string plist = pList(args); 
 	string qlist = pList(q_args);
 	string thetal = printMapInline(theta);
-	cout << "unify_var( " << plist << " , " <<  qlist << " , " << thetal << " )"<< endl;
+	// cout << "unify_var( " << plist << " , " <<  qlist << " , " << thetal << " )"<< endl;
 	string var = args.front();
 	string var2 = q_args.front();
 	unordered_map<string,string>::iterator it1 = theta.find(var);
@@ -338,7 +338,7 @@ unordered_map<string,string> unify(list<string> args, list<string> q_args, unord
 	string plist = pList(args);
 	string qlist = pList(q_args);
 	string thetal = printMapInline(theta);
-	cout << "unify( " << plist << " , " << qlist << " , " << thetal << " )" << endl;
+	// cout << "unify( " << plist << " , " << qlist << " , " << thetal << " )" << endl;
 
 
 	unordered_map<string,string>::iterator it = theta.find("failure");
@@ -379,7 +379,7 @@ unordered_map<string,string> unify(list<string> args, list<string> q_args, unord
 
 list<sentence> fetch_rules(list<sentence> kb, term query)
 {
-	cout << "fetch_rules ( KB , " << pTerm(query) << " )"<<endl; 
+	// cout << "fetch_rules ( KB , " << pTerm(query) << " )"<<endl; 
 	list<sentence>::iterator it;
 	list<sentence> res;
 	for(it=kb.begin();it!=kb.end();++it)
@@ -459,7 +459,7 @@ list< unordered_map<string,string> > bc_or(map<char, list<sentence> > kb, term q
 	string qlist = pTerm(query);
 	string thetal = printMapInline(theta);
 	string donelist = printListTerms(done);
-	cout << "bc_or ( KB , " << qlist << " , " << thetal <<  " , " << donelist << " )\n";
+	// cout << "bc_or ( KB , " << qlist << " , " << thetal <<  " , " << donelist << " )\n";
 	list<sentence>::iterator it;
 	list< unordered_map<string,string> > res;
 	if(allConst(query))
@@ -479,7 +479,7 @@ list< unordered_map<string,string> > bc_or(map<char, list<sentence> > kb, term q
 	list<sentence> bucket = kb[query.name.at(0)]; 
 
 	list<sentence> sub_kb = fetch_rules(bucket, query);
-	printKB(sub_kb);
+	// printKB(sub_kb);
 	
 	// unordered_map<string,string> result;
 
@@ -509,7 +509,7 @@ list<unordered_map<string,string> > bc_and(map< char, list<sentence> > kb, list<
 	// string qlist = pTerm(query);
 	string thetal = printMapInline(theta);
 	string donelist = printListTerms(done);
-	cout << "bc_and ( KB , " << printListTerms(predcs) << " , "<< thetal << " , " << donelist <<" )\n";
+	// cout << "bc_and ( KB , " << printListTerms(predcs) << " , "<< thetal << " , " << donelist <<" )\n";
 
 	list<unordered_map<string,string> > result;
 	unordered_map<string,string>::const_iterator got = theta.find ("failure");
@@ -593,16 +593,12 @@ int main(int argc, char *argv[])
 	list<string> query; //list of queries
 	list<sentence> KB;
 	list<term> Q; // the parsed KB.
-	// main_rhs = query;// for something
 	int kb_size, q_size; // kb_size stores the KB size and q_size stores the numeber of queries
 	string inputfile = argv[2]; 
 
 	f.open(inputfile, ios::in); //open the file
-	// f >> temp_str;
 	getline(f, temp_str);
 	q_size = stoi(temp_str);
-
-	//string temp;
 
 	for(int i = 0 ; i < q_size; i++)
 	{
@@ -620,10 +616,6 @@ int main(int argc, char *argv[])
 	}
 	f.close();
 
-	// cout << "The KB:\n";
-	// printList(kb);
-	// cout << "\nThe Query list:\n";
-	// printList(query);
 	list<string>::iterator it;
 	int i =0;
 	for(it = kb.begin(); it!=kb.end(); i++ ,it++) // parsing and creating the new KB
@@ -638,38 +630,17 @@ int main(int argc, char *argv[])
 		term t(*it1);
 		Q.push_back(t);
 	}
-	//printing KB
-	// cout << endl;
-	// standardizeKB(KB);
-	// printKB(KB);
-	// cout << "------------------------\n";
-	// cout << printListTerms(Q) << endl;
-	// cout << "------------------------\n";
+
 	map<char, list<sentence> > hashedKB;
 	hashedKB = hashKB(KB);
-// cout << "it works!!\n";
-	// printKB(hashedKB['H']);
-	// getchar();
+
 	list<term>::iterator it2;
 	list<string> ans;
-	// getchar();
 	for(it2 = Q.begin(); it2!=Q.end(); it2++)
 	{
 		joke = 0;
 		string output = "TRUE"; 
 		list<unordered_map<string,string> > res =  bc_ask(hashedKB, *it2);
-
-		list< unordered_map<string,string> >:: iterator it2;
-		for(it2=res.begin(); it2!=res.end(); ++it2)
-		{
-			cout << "-----------------------\n";
-			for(auto& x: *it2)
-			{
-				cout << x.first << ": " << x.second << endl;
-			}
-		}
-		cout << "-----------------------\n";
-
 		if (res.empty())
 		{
 			output = "FALSE";
@@ -684,7 +655,6 @@ int main(int argc, char *argv[])
 			ans.push_back(output);
 			continue;
 		}
-
 		if(res.size() != 1)
 		{
 			list< unordered_map<string,string> >::iterator i;
@@ -704,17 +674,11 @@ int main(int argc, char *argv[])
 		}
 		ans.push_back(output);
 	}
-	cout << endl;
 	ofstream o_file;
 	o_file.open("output.txt");
 	list<string>::iterator itr;
 	for(itr=ans.begin();itr!=ans.end();++itr)
 		o_file << *itr << endl;
 	o_file.close();
-	printList(ans);
-	cout << endl;
-
-	// printKB(KB);
 	return 0;
-		
 }

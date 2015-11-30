@@ -3,6 +3,6 @@ A(Nick)
 5
 G(x,x) ^ M(y) => A(y)
 M(Nick)
-N(y) => G(y, John)
+N(y) => G(y,John)
 N(Brick)
 G(Brick,John)
