@@ -255,21 +255,22 @@ void standardizeTerm(term& t , int i)
 
 }
 
-void standardizeKB(list<sentence>& kb)
+void standardizeApart(sentence& s)
 {
-	list<sentence> res;
-	list<sentence>::iterator it1;
-	int i = 0; 
-	for(it1 = kb.begin(); it1 != kb.end(); ++i, ++it1)
-	{
-		// cout << i+1 <<  ") Type: " << it1->type << " ";
+	// list<sentence> res;
+	// list<sentence>::iterator it1;
+	// int i = 0; 
+	// for(it1 = kb.begin(); it1 != kb.end(); ++i, ++it1)
+	// {
+	// 	// cout << i+1 <<  ") Type: " << it1->type << " ";
 		list<term>::iterator it;
-		for(it = it1->predicates.begin(); it!=it1->predicates.end(); ++it)
+		for(it = s.predicates.begin(); it!=s.predicates.end(); ++it)
 		{
-			standardizeTerm(*it, i);
+			standardizeTerm(*it, joke);
 		}
-		standardizeTerm(it1->consequent, i);
-	}
+		standardizeTerm(s.consequent, joke);
+		joke++;
+	// }
 }
 
 
@@ -453,7 +454,7 @@ bool isDone(list<term> done, term query)
 }
 list< unordered_map<string,string> > bc_or(list<sentence> kb, term query, unordered_map<string,string> theta, list<term> done)
 {
-	getchar();
+	// getchar();
 
 	string qlist = pTerm(query);
 	string thetal = printMapInline(theta);
@@ -482,6 +483,7 @@ list< unordered_map<string,string> > bc_or(list<sentence> kb, term query, unorde
 
 	for(it = sub_kb.begin(); it != sub_kb.end(); ++it)
 	{
+		standardizeApart(*it);
 		list<term> lhs = it->predicates;
 		term rhs = it->consequent;
 		list<string> rhs_args = rhs.args;
@@ -612,7 +614,7 @@ int main(int argc, char *argv[])
 	}
 	//printing KB
 	// cout << endl;
-	standardizeKB(KB);
+	// standardizeKB(KB);
 	printKB(KB);
 	cout << "------------------------\n";
 	cout << printListTerms(Q) << endl;
@@ -634,6 +636,7 @@ int main(int argc, char *argv[])
 	// getchar();
 	for(it2 = Q.begin(); it2!=Q.end(); it2++)
 	{
+		joke = 0;
 		string output = "TRUE"; 
 		list<unordered_map<string,string> > res =  bc_ask(KB, *it2);
 
